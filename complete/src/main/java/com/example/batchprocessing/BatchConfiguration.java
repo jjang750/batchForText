@@ -17,6 +17,7 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.file.transform.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,15 +39,25 @@ public class BatchConfiguration {
 	// tag::readerwriterprocessor[]
 	@Bean
 	public FlatFileItemReader<Person> reader() {
+//		return new FlatFileItemReaderBuilder<Person>()
+//			.name("personItemReader")
+//			.resource(new ClassPathResource("sample-data.csv"))
+//			.delimited()
+//			.names("firstName", "lastName")
+//			.fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
+//				setTargetType(Person.class);
+//			}})
+//			.build();
 		return new FlatFileItemReaderBuilder<Person>()
-			.name("personItemReader")
-			.resource(new ClassPathResource("sample-data.csv"))
-			.delimited()
-			.names(new String[]{"firstName", "lastName"})
-			.fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
-				setTargetType(Person.class);
-			}})
-			.build();
+				.name("personItemReader")
+				.resource(new ClassPathResource("sample-data.txt"))
+				.fixedLength()
+				.columns(new Range(1, 21), new Range(22, 42))
+				.names("firstName", "lastName")
+				.fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
+					setTargetType(Person.class);
+				}})
+				.build();
 	}
 
 	@Bean
