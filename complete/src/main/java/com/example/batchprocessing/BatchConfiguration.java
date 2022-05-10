@@ -2,6 +2,8 @@ package com.example.batchprocessing;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -18,6 +20,7 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.file.transform.Range;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +31,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 @EnableBatchProcessing
 public class BatchConfiguration {
+
+	private static final Logger log = LoggerFactory.getLogger(BatchConfiguration.class);
 
 	@Autowired
 	public JobBuilderFactory jobBuilderFactory;
@@ -82,6 +87,7 @@ public class BatchConfiguration {
 			.incrementer(new RunIdIncrementer())
 			.listener(listener)
 			.flow(step1)
+				.next(lastStep())
 			.end()
 			.build();
 	}
@@ -94,6 +100,16 @@ public class BatchConfiguration {
 			.processor(processor())
 			.writer(writer)
 			.build();
+	}
+
+	@Bean
+	public Step lastStep(){
+		return stepBuilderFactory.get("lastStep")
+				.tasklet((contribution, chunkContext) -> {
+					log.info("Last Step!!");
+					return RepeatStatus.FINISHED;
+				})
+				.build();
 	}
 	// end::jobstep[]
 }
