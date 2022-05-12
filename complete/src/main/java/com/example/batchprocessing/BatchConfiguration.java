@@ -57,7 +57,7 @@ public class BatchConfiguration {
 				.name("personItemReader")
 				.resource(new ClassPathResource("sample-data.txt"))
 				.fixedLength()
-				.columns(new Range(1, 21), new Range(22, 42))
+				.columns(new Range(1, 21), new Range(21, 42))
 				.names("firstName", "lastName")
 				.fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
 					setTargetType(Person.class);
