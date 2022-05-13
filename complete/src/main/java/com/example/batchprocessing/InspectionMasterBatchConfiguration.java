@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.sql.DataSource;
 
@@ -223,6 +224,7 @@ public class InspectionMasterBatchConfiguration {
                 ":BOKJI_ADD_DISC" + "\n" +
                 ") ";
 
+
         return new JdbcBatchItemWriterBuilder<InspectionMaster>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql(sql)
@@ -250,6 +252,8 @@ public class InspectionMasterBatchConfiguration {
                 .reader(reader())
                 .processor(processor())
                 .writer(writer)
+                    .faultTolerant()
+                    .noRollback(NullPointerException.class)
                 .build();
     }
 
