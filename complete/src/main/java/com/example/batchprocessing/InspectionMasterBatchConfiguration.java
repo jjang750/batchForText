@@ -155,6 +155,8 @@ public class InspectionMasterBatchConfiguration {
                 "CUST_NO," + "\n" +
                 "HOUSE_NO," + "\n" +
                 "BILLYM," + "\n" +
+                "TRANS_DATE," + "\n" +
+                "CREATEDT," + "\n" +
                 "NUMBER_OF_LIFE," + "\n" +
                 "NUMBER_OF_HANDICAPPED," + "\n" +
                 "NUMBER_OF_MERIT," + "\n" +
@@ -191,6 +193,8 @@ public class InspectionMasterBatchConfiguration {
                 ":CUST_NO," + "\n" +
                 ":HOUSE_NO," + "\n" +
                 ":BILLYM," + "\n" +
+                ":TRANS_DATE," + "\n" +
+                ":CREATEDT," + "\n" +
                 ":NUMBER_OF_LIFE," + "\n" +
                 ":NUMBER_OF_HANDICAPPED," + "\n" +
                 ":NUMBER_OF_MERIT," + "\n" +

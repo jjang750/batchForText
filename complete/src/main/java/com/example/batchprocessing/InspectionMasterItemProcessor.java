@@ -9,6 +9,8 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class InspectionMasterItemProcessor implements ItemProcessor<InspectionMaster, InspectionMaster> {
 
@@ -16,6 +18,10 @@ public class InspectionMasterItemProcessor implements ItemProcessor<InspectionMa
 
 	@Override
 	public InspectionMaster process(final InspectionMaster inspectionMaster) throws Exception {
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+		inspectionMaster.setTRANS_DATE(format.format(Calendar.getInstance().getTime()));
+		inspectionMaster.setCREATEDT(format.format(Calendar.getInstance().getTime()));
 
 		log.info("process (" + inspectionMaster + ") ");
 //
@@ -25,6 +31,9 @@ public class InspectionMasterItemProcessor implements ItemProcessor<InspectionMa
 
 		return inspectionMaster;
 	}
+
+
+
 
 
 }
