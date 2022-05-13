@@ -1,5 +1,6 @@
 package com.example.batchprocessing;
 
+import com.example.batchprocessing.beans.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
