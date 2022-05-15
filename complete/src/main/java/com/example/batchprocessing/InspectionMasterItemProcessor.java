@@ -26,14 +26,14 @@ public class InspectionMasterItemProcessor extends JdbcDaoSupport implements Ite
 	public InspectionMaster process(final InspectionMaster inspectionMaster) throws Exception {
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
-		getJdbcTemplate().update(" DELETE FROM HJIN.INSPECTION_MASTER WHERE CUST_NO = '"+ inspectionMaster.getCUST_NO() +"' AND CREATEDT = '" +format.format(Calendar.getInstance().getTime())+ "' ");
+//		getJdbcTemplate().update(" DELETE FROM HJIN.INSPECTION_MASTER WHERE CUST_NO = '"+ inspectionMaster.getCUST_NO() +"' AND CREATEDT = '" +format.format(Calendar.getInstance().getTime())+ "' ");
 //		Map actcd = getJdbcTemplate().queryForMap("SELECT APTCD FROM HJIN.service_apt WHERE CUST_NO = '"+ inspectionMaster.getCUST_NO() +"' ");
 //		if(!actcd.isEmpty()) inspectionMaster.setAPTCD(actcd.get("APTCD").toString());
 
 		inspectionMaster.setTRANS_DATE(format.format(Calendar.getInstance().getTime()));
 		inspectionMaster.setCREATEDT(format.format(Calendar.getInstance().getTime()));
 
-		log.info("process (" + inspectionMaster + ") ");
+		//log.info("process (" + inspectionMaster + ") ");
 
 
 
