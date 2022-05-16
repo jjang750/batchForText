@@ -33,7 +33,8 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
 	@Override
 	public void afterJob(JobExecution jobExecution) {
 		if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
-			log.info("!!! JOB FINISHED! Time to verify the results");
+			log.info("!!! JOB FINISHED! Time to verify the results" );
+			log.info(" INSPECTION_MASTER COUNT : " + jdbcTemplate.queryForMap("SELECT COUNT(*) AS CNT FROM HJIN.INSPECTION_MASTER" ) .get("CNT").toString());
 //
 //			jdbcTemplate.query("SELECT first_name, last_name FROM people",
 //				(rs, row) -> new Person(

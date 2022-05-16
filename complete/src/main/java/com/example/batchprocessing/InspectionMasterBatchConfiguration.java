@@ -45,7 +45,7 @@ public class InspectionMasterBatchConfiguration  extends JdbcDaoSupport {
     @Bean
     public FlatFileItemReader<InspectionMaster> reader() {
         FlatFileItemReader<InspectionMaster> flatFileItemReader = new FlatFileItemReader<>();
-        flatFileItemReader.setResource(new ClassPathResource("EH060424.20220503"));
+        flatFileItemReader.setResource(new ClassPathResource("EH060505.20220513"));
         flatFileItemReader.setLinesToSkip(1);
         flatFileItemReader.setLineMapper((line, lineNumber) -> {
             if (line.startsWith("31") || line.startsWith("33") ) {
