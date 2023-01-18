@@ -1,6 +1,6 @@
-package com.example.batchprocessing;
+package com.aegisep.batch.file2db;
 
-import com.example.batchprocessing.beans.ResidentVo;
+import com.aegisep.batch.file2db.beans.ResidentVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 

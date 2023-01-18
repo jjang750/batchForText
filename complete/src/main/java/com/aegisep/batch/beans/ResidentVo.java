@@ -1,6 +1,5 @@
-package com.example.batchprocessing.beans;
+package com.aegisep.batch.beans;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

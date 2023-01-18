@@ -1,6 +1,6 @@
-package com.example.batchprocessing;
+package com.aegisep.batch.db2file;
 
-import com.example.batchprocessing.beans.ResidentVo;
+import com.aegisep.batch.beans.ResidentVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

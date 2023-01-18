@@ -1,4 +1,4 @@
-package com.example.batchprocessing;
+package com.aegisep.batch.file2db;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
