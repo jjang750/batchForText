@@ -36,7 +36,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
 			log.info(" INSPECTION_MASTER COUNT : " + jdbcTemplate.queryForMap("SELECT COUNT(*) AS CNT FROM HJIN.INSPECTION_MASTER" ) .get("CNT").toString());
 //
 //			jdbcTemplate.query("SELECT first_name, last_name FROM people",
-//				(rs, row) -> new PersonVo(
+//				(rs, row) -> new ResidentVo(
 //					rs.getString(1),
 //					rs.getString(2))
 //			).forEach(person -> log.info("Found <" + person + "> in the database."));

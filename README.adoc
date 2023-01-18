@@ -218,7 +218,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_an_executable_jar_with_both.adoc[]
 
-The job prints out a line for each personVo that gets transformed. After the job runs, you
+The job prints out a line for each residentVo that gets transformed. After the job runs, you
 can also see the output from querying the database. It should resemble the following
 output:
 

@@ -2,14 +2,12 @@ package com.example.batchprocessing.beans;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @ToString
-public class PersonVo {
-
-	private String lastName;
-	private String firstName;
-
+public class ResidentVo {
+	private String aptcd, orgaptcd, dongho, occu_date, rel;
 }
