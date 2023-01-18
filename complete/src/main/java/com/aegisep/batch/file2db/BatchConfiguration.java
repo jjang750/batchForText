@@ -1,6 +1,7 @@
 package com.aegisep.batch.file2db;
 
-import com.aegisep.batch.file2db.beans.ResidentVo;
+import com.aegisep.batch.dto.ResidentVo;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -9,17 +10,19 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
-import org.springframework.batch.item.file.FlatFileItemWriter;
-import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
-import org.springframework.batch.item.file.transform.FormatterLineAggregator;
+import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.file.transform.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.PathResource;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -27,10 +30,8 @@ import javax.sql.DataSource;
 @Configuration
 @EnableBatchProcessing
 @Repository
+@Slf4j
 public class BatchConfiguration {
-
-	private static final Logger log = LoggerFactory.getLogger(BatchConfiguration.class);
-
 	@Autowired
 	public JobBuilderFactory jobBuilderFactory;
 
@@ -44,54 +45,47 @@ public class BatchConfiguration {
 	private DataSource dataSource;
 
 	@Bean
-	public JdbcCursorItemReader<ResidentVo> jdbcCursorItemReader() {
+	public FlatFileItemReader<ResidentVo> flatFileItemReader() {
 
-		log.debug("jdbcCursorItemReader");
+		int index = 1;
 
-		StringBuffer sql = new StringBuffer();
+		Range [] ranges = {
+				new Range(index, index = index+4),
+				new Range(index = index + 1, index = index+4),
+				new Range(index = index + 1, index = index+7),
+				new Range(index = index + 1, index = index+7),
+				new Range(index = index + 1, index)};
 
-		sql.append("SELECT b.aptcd, a.orgaptcd, a.dongho, a.xdate AS occu_date, a.rel\n" +
-				"FROM (\n" +
-				"  SELECT ROWNUM AS xnum, orgaptcd, dongho, xdate, rel \n" +
-				"  FROM (\n" +
-				"    SELECT orgaptcd, dongho, CASE WHEN occu_date != '00000000' THEN occu_date \n" +
-				"    WHEN reg_date != '00000000' THEN reg_date ELSE upd_date END AS xdate, rel\n" +
-				"    FROM (\n" +
-				"      SELECT orgaptcd, dongho, NVL(occu_date,'00000000') AS occu_date, NVL(reg_date,'00000000') AS reg_date, NVL(upd_date,'00000000') AS upd_date, CASE WHEN INSTR(rel,'세대') > 0 THEN 'Y' ELSE 'N' END AS rel\n" +
-				"      FROM map.resident \n" +
-				"      \n" +
-				"        WHERE delflag IS NULL\n" +
-				"    ) ORDER BY xdate DESC\n" +
-				"  )\n" +
-				") a, hjin.apt b\n" +
-				"WHERE a.orgaptcd = b.orgaptcd \n");
+		index = 1;
 
-		return new JdbcCursorItemReaderBuilder<ResidentVo>()
-				.name("jdbcCursorItemReader")   //reader name
-				.fetchSize(chunkSize)
-				.dataSource(dataSource)
-				.rowMapper(new BeanPropertyRowMapper<>(ResidentVo.class))
-				.sql(sql.toString())
+		log.debug("mix {}, max {}", index, index = index+4);
+		log.debug("mix {}, max {}", index = index + 1, index = index+4);
+		log.debug("mix {}, max {}", index = index + 1, index = index+7);
+		log.debug("mix {}, max {}", index = index + 1, index = index+7);
+		log.debug("mix {}, max {}", index = index + 1, index);
+
+		log.debug(" >>>>>>>>>>> " + ranges.length + " >>>>>>>>>>>> " + index);
+
+		return new FlatFileItemReaderBuilder<ResidentVo>()
+				.name("personItemReader")
+				.resource(new PathResource("output/RS001.20230118.txt"))
+				.fixedLength()
+				.columns(ranges)
+				.names("aptcd", "orgaptcd", "dongho", "occu_date", "rel")
+				.fieldSetMapper(new BeanWrapperFieldSetMapper<ResidentVo>() {{
+					setTargetType(ResidentVo.class);
+				}})
 				.build();
 	}
 
 	@Bean
-	public FlatFileItemWriter<ResidentVo> fixedLengthFileItemWriter(){
-
-		log.debug("fixedLengthFileItemWriter ");
-
-		FlatFileItemWriter<ResidentVo> writer = new FlatFileItemWriter<>();
-		writer.setEncoding("UTF-8");
-		writer.setResource(new FileSystemResource("output/RS001.20230118.txt"));
-		writer.setLineAggregator(new FormatterLineAggregator<>() {{
-			setFormat("%-5s%-5s%-8s%-8s%-1s");
-			setFieldExtractor(new BeanWrapperFieldExtractor<>() {{
-				setNames(new String[]{"aptcd", "orgaptcd", "dongho", "occu_date", "rel"});
-			}});
-		}});
-		return writer;
+	public JdbcBatchItemWriter<ResidentVo> jdbcBatchItemWriter() {
+		return new JdbcBatchItemWriterBuilder<ResidentVo>()
+				.itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
+				.sql("INSERT INTO resident (aptcd, orgaptcd, dongho, occu_date, rel) VALUES (:aptcd, :orgaptcd, :dongho, :occu_date, :rel)")
+				.dataSource(dataSource)
+				.build();
 	}
-
 	@Bean
 	public ResidentItemProcessor processor() {
 		return new ResidentItemProcessor();
@@ -110,9 +104,9 @@ public class BatchConfiguration {
 	public Step step1(){
 		return stepBuilderFactory.get("step1")
 			.<ResidentVo, ResidentVo> chunk(chunkSize)
-			.reader(jdbcCursorItemReader())
+			.reader(flatFileItemReader())
 			.processor(processor())
-			.writer(fixedLengthFileItemWriter())
+			.writer(jdbcBatchItemWriter())
 			.build();
 	}
 }

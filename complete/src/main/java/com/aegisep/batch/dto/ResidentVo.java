@@ -1,4 +1,4 @@
-package com.aegisep.batch.beans;
+package com.aegisep.batch.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
