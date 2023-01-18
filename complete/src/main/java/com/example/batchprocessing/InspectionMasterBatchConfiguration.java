@@ -1,6 +1,6 @@
 package com.example.batchprocessing;
 
-import com.example.batchprocessing.beans.InspectionMaster;
+import com.example.batchprocessing.beans.InspectionMasterVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -9,21 +9,16 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.listener.SkipListenerSupport;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileParseException;
-import org.springframework.batch.item.file.LineCallbackHandler;
-import org.springframework.batch.item.file.LineMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
@@ -43,8 +38,8 @@ public class InspectionMasterBatchConfiguration  extends JdbcDaoSupport {
     public StepBuilderFactory stepBuilderFactory;
     // end::setup[]
     @Bean
-    public FlatFileItemReader<InspectionMaster> reader() {
-        FlatFileItemReader<InspectionMaster> flatFileItemReader = new FlatFileItemReader<>();
+    public FlatFileItemReader<InspectionMasterVo> reader() {
+        FlatFileItemReader<InspectionMasterVo> flatFileItemReader = new FlatFileItemReader<>();
         flatFileItemReader.setResource(new ClassPathResource("EH060505.20220513"));
         flatFileItemReader.setLinesToSkip(1);
         flatFileItemReader.setLineMapper((line, lineNumber) -> {
@@ -52,8 +47,8 @@ public class InspectionMasterBatchConfiguration  extends JdbcDaoSupport {
                 return null;
             }
 
-            InspectionMaster inspectionMaster = new InspectionMaster(line, lineNumber);
-            return inspectionMaster;
+            InspectionMasterVo inspectionMasterVo = new InspectionMasterVo(line, lineNumber);
+            return inspectionMasterVo;
         });
 
 
@@ -72,7 +67,7 @@ public class InspectionMasterBatchConfiguration  extends JdbcDaoSupport {
     }
 
     @Bean
-    public JdbcBatchItemWriter<InspectionMaster> writer(DataSource dataSource) {
+    public JdbcBatchItemWriter<InspectionMasterVo> writer(DataSource dataSource) {
 
         String sql = "INSERT INTO" + "\n" +
                 "HJIN.INSPECTION_MASTER (" + "\n" +
@@ -153,7 +148,7 @@ public class InspectionMasterBatchConfiguration  extends JdbcDaoSupport {
                 ") ";
 
 
-        return new JdbcBatchItemWriterBuilder<InspectionMaster>()
+        return new JdbcBatchItemWriterBuilder<InspectionMasterVo>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql(sql)
                 .dataSource(dataSource)
@@ -174,9 +169,9 @@ public class InspectionMasterBatchConfiguration  extends JdbcDaoSupport {
     }
 
     @Bean
-    public Step step1(JdbcBatchItemWriter<InspectionMaster> writer) {
+    public Step step1(JdbcBatchItemWriter<InspectionMasterVo> writer) {
         return stepBuilderFactory.get("step1")
-                .<InspectionMaster, InspectionMaster> chunk(1000)
+                .<InspectionMasterVo, InspectionMasterVo> chunk(1000)
                 .reader(reader())
                 .faultTolerant()
                 .noRollback(NullPointerException.class)

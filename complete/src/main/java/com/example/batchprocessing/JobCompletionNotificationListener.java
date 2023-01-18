@@ -1,6 +1,5 @@
 package com.example.batchprocessing;
 
-import com.example.batchprocessing.beans.Person;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
@@ -37,7 +36,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
 			log.info(" INSPECTION_MASTER COUNT : " + jdbcTemplate.queryForMap("SELECT COUNT(*) AS CNT FROM HJIN.INSPECTION_MASTER" ) .get("CNT").toString());
 //
 //			jdbcTemplate.query("SELECT first_name, last_name FROM people",
-//				(rs, row) -> new Person(
+//				(rs, row) -> new PersonVo(
 //					rs.getString(1),
 //					rs.getString(2))
 //			).forEach(person -> log.info("Found <" + person + "> in the database."));

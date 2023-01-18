@@ -1,11 +1,10 @@
 package com.example.batchprocessing;
 
-import com.example.batchprocessing.beans.Person;
+import com.example.batchprocessing.beans.PersonVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -19,7 +18,6 @@ import org.springframework.batch.item.file.transform.Range;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
@@ -42,24 +40,24 @@ public class BatchConfiguration {
 
 	// tag::readerwriterprocessor[]
 	@Bean
-	public FlatFileItemReader<Person> reader() {
-//		return new FlatFileItemReaderBuilder<Person>()
+	public FlatFileItemReader<PersonVo> reader() {
+//		return new FlatFileItemReaderBuilder<PersonVo>()
 //			.name("personItemReader")
 //			.resource(new ClassPathResource("sample-data.csv"))
 //			.delimited()
 //			.names("firstName", "lastName")
-//			.fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
-//				setTargetType(Person.class);
+//			.fieldSetMapper(new BeanWrapperFieldSetMapper<PersonVo>() {{
+//				setTargetType(PersonVo.class);
 //			}})
 //			.build();
-		return new FlatFileItemReaderBuilder<Person>()
+		return new FlatFileItemReaderBuilder<PersonVo>()
 				.name("personItemReader")
 				.resource(new ClassPathResource("sample-data.txt"))
 				.fixedLength()
 				.columns(new Range(1, 21), new Range(21, 42))
 				.names("firstName", "lastName")
-				.fieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
-					setTargetType(Person.class);
+				.fieldSetMapper(new BeanWrapperFieldSetMapper<PersonVo>() {{
+					setTargetType(PersonVo.class);
 				}})
 				.build();
 	}
@@ -70,8 +68,8 @@ public class BatchConfiguration {
 	}
 
 	@Bean
-	public JdbcBatchItemWriter<Person> writer(DataSource dataSource) {
-		return new JdbcBatchItemWriterBuilder<Person>()
+	public JdbcBatchItemWriter<PersonVo> writer(DataSource dataSource) {
+		return new JdbcBatchItemWriterBuilder<PersonVo>()
 			.itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
 			.sql("INSERT INTO people (person_id, first_name, last_name) VALUES (people_seq.nextval, :firstName, :lastName)")
 			.dataSource(dataSource)
@@ -92,9 +90,9 @@ public class BatchConfiguration {
 	}
 
 	@Bean
-	public Step step1(JdbcBatchItemWriter<Person> writer) {
+	public Step step1(JdbcBatchItemWriter<PersonVo> writer) {
 		return stepBuilderFactory.get("step1")
-			.<Person, Person> chunk(10)
+			.<PersonVo, PersonVo> chunk(10)
 			.reader(reader())
 			.processor(processor())
 			.writer(writer)
