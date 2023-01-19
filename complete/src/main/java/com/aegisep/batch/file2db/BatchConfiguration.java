@@ -2,8 +2,6 @@ package com.aegisep.batch.file2db;
 
 import com.aegisep.batch.dto.ResidentVo;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -21,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.stereotype.Repository;
 
@@ -51,27 +48,22 @@ public class BatchConfiguration {
 
 		Range [] ranges = {
 				new Range(index, index = index+4),
-				new Range(index = index + 1, index = index+4),
-				new Range(index = index + 1, index = index+7),
-				new Range(index = index + 1, index = index+7),
-				new Range(index = index + 1, index)};
-
-		index = 1;
-
-		log.debug("mix {}, max {}", index, index = index+4);
-		log.debug("mix {}, max {}", index = index + 1, index = index+4);
-		log.debug("mix {}, max {}", index = index + 1, index = index+7);
-		log.debug("mix {}, max {}", index = index + 1, index = index+7);
-		log.debug("mix {}, max {}", index = index + 1, index);
+				new Range(index = index + 1, index = index + 4),
+				new Range(index = index + 1, index = index + 7),
+				new Range(index = index + 1, index = index + 7),
+				new Range(index = index + 1, index = index + 9),
+				new Range(index = index + 1, index = index + 9),
+				new Range(index = index + 1, index + 12)};
 
 		log.debug(" >>>>>>>>>>> " + ranges.length + " >>>>>>>>>>>> " + index);
 
 		return new FlatFileItemReaderBuilder<ResidentVo>()
 				.name("personItemReader")
 				.resource(new PathResource("output/RS001.20230118.txt"))
+				.encoding("EUC-KR")
 				.fixedLength()
 				.columns(ranges)
-				.names("aptcd", "orgaptcd", "dongho", "occu_date", "rel")
+				.names("aptcd", "orgaptcd", "dongho", "occu_date", "rel", "name", "mobile_tel_no1")
 				.fieldSetMapper(new BeanWrapperFieldSetMapper<ResidentVo>() {{
 					setTargetType(ResidentVo.class);
 				}})
@@ -82,7 +74,8 @@ public class BatchConfiguration {
 	public JdbcBatchItemWriter<ResidentVo> jdbcBatchItemWriter() {
 		return new JdbcBatchItemWriterBuilder<ResidentVo>()
 				.itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
-				.sql("INSERT INTO resident (aptcd, orgaptcd, dongho, occu_date, rel) VALUES (:aptcd, :orgaptcd, :dongho, :occu_date, :rel)")
+				.sql("INSERT INTO resident (aptcd, orgaptcd, dongho, occu_date, rel, name, mobile_tel_no1) " +
+						"VALUES (:aptcd, :orgaptcd, :dongho, :occu_date, :rel, :name, :mobile_tel_no1)")
 				.dataSource(dataSource)
 				.build();
 	}

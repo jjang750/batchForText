@@ -8,5 +8,5 @@ import lombok.ToString;
 @Data
 @ToString
 public class ResidentVo {
-	private String aptcd, orgaptcd, dongho, occu_date, rel;
+	private String aptcd, orgaptcd, dongho, occu_date, rel, name, mobile_tel_no1;
 }
