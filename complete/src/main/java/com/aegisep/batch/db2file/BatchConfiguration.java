@@ -50,21 +50,9 @@ public class BatchConfiguration {
 
 		StringBuffer sql = new StringBuffer();
 
-		sql.append("SELECT b.aptcd, a.orgaptcd, a.dongho, a.xdate AS occu_date, a.rel\n" +
-				"FROM (\n" +
-				"  SELECT ROWNUM AS xnum, orgaptcd, dongho, xdate, rel \n" +
-				"  FROM (\n" +
-				"    SELECT orgaptcd, dongho, CASE WHEN occu_date != '00000000' THEN occu_date \n" +
-				"    WHEN reg_date != '00000000' THEN reg_date ELSE upd_date END AS xdate, rel\n" +
-				"    FROM (\n" +
-				"      SELECT orgaptcd, dongho, NVL(occu_date,'00000000') AS occu_date, NVL(reg_date,'00000000') AS reg_date, NVL(upd_date,'00000000') AS upd_date, CASE WHEN INSTR(rel,'세대') > 0 THEN 'Y' ELSE 'N' END AS rel\n" +
-				"      FROM map.resident \n" +
-				"      \n" +
-				"        WHERE delflag IS NULL\n" +
-				"    ) ORDER BY xdate DESC\n" +
-				"  )\n" +
-				") a, hjin.apt b\n" +
-				"WHERE a.orgaptcd = b.orgaptcd \n");
+		sql.append("select b.aptcd, a.orgaptcd, a.dongho, a.occu_date, a.rel, a.name, a.mobile_tel_no1 \n" +
+				"from resident a, apt b \n" +
+				"where a.orgaptcd = b.orgaptcd");
 
 		return new JdbcCursorItemReaderBuilder<ResidentVo>()
 				.name("jdbcCursorItemReader")   //reader name
@@ -84,9 +72,9 @@ public class BatchConfiguration {
 		writer.setEncoding("UTF-8");
 		writer.setResource(new FileSystemResource("output/RS001.20230118.txt"));
 		writer.setLineAggregator(new FormatterLineAggregator<>() {{
-			setFormat("%-5s%-5s%-8s%-8s%-1s");
+			setFormat("%-5s%-5s%-8s%-8s%-10s%-10s%-13s");
 			setFieldExtractor(new BeanWrapperFieldExtractor<>() {{
-				setNames(new String[]{"aptcd", "orgaptcd", "dongho", "occu_date", "rel"});
+				setNames(new String[]{"aptcd", "orgaptcd", "dongho", "occu_date", "rel", "name", "mobile_tel_no1"});
 			}});
 		}});
 		return writer;

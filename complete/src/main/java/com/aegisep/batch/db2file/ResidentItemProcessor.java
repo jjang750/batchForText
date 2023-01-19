@@ -20,6 +20,8 @@ public class ResidentItemProcessor implements ItemProcessor<ResidentVo, Resident
 		transformedResidentVo.setDongho(residentVo.getDongho());
 		transformedResidentVo.setOccu_date(residentVo.getOccu_date());
 		transformedResidentVo.setRel(residentVo.getRel());
+		transformedResidentVo.setName(residentVo.getName());
+		transformedResidentVo.setMobile_tel_no1(residentVo.getMobile_tel_no1());
 
 		log.info("Converting (" + residentVo + ") into (" + transformedResidentVo + ")");
 
